@@ -61,7 +61,6 @@ export default async function Home({ searchParams: { month } }: HomeProps) {
           </div>
           <LastTransactions lastTransactions={dashboard.lastTransactions} />
         </div>
-        <h1>test 2</h1>
       </div>
     </>
   );
