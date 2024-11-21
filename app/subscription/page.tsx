@@ -74,7 +74,6 @@ export default async function SubscriptionPage() {
               </div>
               <AcquirePlanButton />
             </CardContent>
-            <h1>sdssdsd</h1>
           </Card>
         </div>
       </div>
