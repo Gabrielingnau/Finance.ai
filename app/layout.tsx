@@ -20,6 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>Finance.ai</title>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body className={`${mulish.className} dark antialiased`}>
         <ClerkProvider
           appearance={{
