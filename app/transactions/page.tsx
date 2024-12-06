@@ -7,18 +7,30 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { canUserAddTransaction } from "@/_data/can-user-add-transaction";
+import { endOfMonth, startOfMonth } from "date-fns";
 
 export default async function TransactionsPage() {
   const { userId } = await auth();
   if (!userId) {
     return redirect("/login");
   }
+  const userCanAddTransactions = await canUserAddTransaction();
+
+  const currentDate = new Date();
+
+  const startDate = startOfMonth(currentDate);
+  const endDate = endOfMonth(currentDate);
+
   const transactions = await db.transaction.findMany({
     where: {
       userId,
+      date: {
+        gte: startDate,
+        lte: endDate,
+      },
     },
+    orderBy: { date: "desc" },
   });
-  const userCanAddTransactions = await canUserAddTransaction();
 
   return (
     <>
