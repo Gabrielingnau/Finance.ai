@@ -32,31 +32,31 @@ const chartConfig = {
 
 interface TransactionsPieChartProps {
   typesPercentage: TransactionPercentagePerType;
-  depositsTotal: number;
-  investmentsTotal: number;
-  expensesTotal: number;
+  depositsTotalNoMes: number;
+  investmentsTotalNoMes: number;
+  expensesTotalNoMes: number;
 }
 
 export default function TransactionsPieChart({
-  depositsTotal,
-  investmentsTotal,
-  expensesTotal,
+  depositsTotalNoMes,
+  investmentsTotalNoMes,
+  expensesTotalNoMes,
   typesPercentage,
 }: TransactionsPieChartProps) {
   const chartData = [
     {
       type: TransactionType.DEPOSIT,
-      amount: depositsTotal,
+      amount: depositsTotalNoMes,
       fill: "#55B02E",
     },
     {
       type: TransactionType.EXPENSE,
-      amount: expensesTotal,
+      amount: expensesTotalNoMes,
       fill: "#E93030",
     },
     {
       type: TransactionType.INVESTMENT,
-      amount: investmentsTotal,
+      amount: investmentsTotalNoMes,
       fill: "#FFFFFF",
     },
   ];

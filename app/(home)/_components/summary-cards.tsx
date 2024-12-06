@@ -9,17 +9,19 @@ import SummaryCard from "./summary-card";
 interface SummaryCards {
   month: string;
   balance: number;
-  depositsTotal: number;
-  investmentsTotal: number;
-  expensesTotal: number;
+  balanceMes: number;
+  depositsTotalNoMes: number;
+  investmentsTotalNoMes: number;
+  expensesTotalNoMes: number;
   userCanAddTransaction?: boolean;
 }
 
 export default async function SummaryCards({
   balance,
-  depositsTotal,
-  expensesTotal,
-  investmentsTotal,
+  balanceMes,
+  depositsTotalNoMes,
+  expensesTotalNoMes,
+  investmentsTotalNoMes,
   userCanAddTransaction,
 }: SummaryCards) {
   return (
@@ -30,6 +32,7 @@ export default async function SummaryCards({
         icon={<WalletIcon size={16} />}
         title="Saldo"
         amount={balance}
+        amountMes={balanceMes}
         size="large"
         userCanAddTransaction={userCanAddTransaction}
       />
@@ -39,17 +42,17 @@ export default async function SummaryCards({
         <SummaryCard
           icon={<PiggyBankIcon size={16} />}
           title="Investido"
-          amount={investmentsTotal}
+          amount={investmentsTotalNoMes}
         />
         <SummaryCard
           icon={<TrendingUpIcon size={16} className="text-primary" />}
           title="Receita"
-          amount={depositsTotal}
+          amount={depositsTotalNoMes}
         />
         <SummaryCard
           icon={<TrendingDownIcon size={16} className="text-red-500" />}
           title="Despesas"
-          amount={expensesTotal}
+          amount={expensesTotalNoMes}
         />
       </div>
     </div>

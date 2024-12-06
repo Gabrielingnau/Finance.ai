@@ -125,9 +125,12 @@ export default function UpsertTransactionDialog({
           <DialogDescription>Insira as informações abaixo</DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="h-[100%]">
+        <ScrollArea className="h-full p-2">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8 p-1"
+            >
               <FormField
                 control={form.control}
                 name="name"

@@ -6,6 +6,7 @@ interface SummaryCardProps {
   icon: ReactNode;
   title: string;
   amount: number;
+  amountMes?: number;
   size?: "small" | "large";
   userCanAddTransaction?: boolean;
 }
@@ -14,6 +15,7 @@ export default function SummaryCard({
   icon,
   title,
   amount,
+  amountMes,
   size = "small",
   userCanAddTransaction,
 }: SummaryCardProps) {
@@ -28,14 +30,31 @@ export default function SummaryCard({
         </p>
       </CardHeader>
       <CardContent className="flex justify-between">
-        <p
-          className={`font-bold ${size === "small" ? "text-2xl" : "text-4xl"}`}
-        >
-          {Intl.NumberFormat("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }).format(amount)}
-        </p>
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col">
+            {size === "large" && <p>Total</p>}
+            <p
+              className={`font-bold ${size === "small" ? "text-2xl" : "text-2xl text-muted-foreground"}`}
+            >
+              {Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(amount)}
+            </p>
+          </div>
+
+          {size === "large" && (
+            <div className="flex flex-col gap-1">
+              <p>Mês</p>
+              <p className="text-4xl font-bold">
+                {Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(amountMes ? amountMes : 0)}
+              </p>
+            </div>
+          )}
+        </div>
 
         {size === "large" && (
           <AddTransactionButton userCanAddTransaction={userCanAddTransaction} />
