@@ -270,7 +270,7 @@ export default function UpsertTransactionDialog({
             </form>
           </Form>
         </ScrollArea>
-      </DialogContent>
+      </DialogContent> 
     </Dialog>
   );
 }
