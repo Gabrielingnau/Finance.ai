@@ -2,8 +2,9 @@ import { db } from "@/_lib/prisma";
 import { TransactionType } from "@prisma/client";
 import { TotalExpensePerCategory, TransactionPercentagePerType } from "./types";
 import { auth } from "@clerk/nextjs/server";
+import { endOfMonth, startOfYear } from "date-fns";
 
-export const getDashboard = async (month?: string) => {
+export const getDashboard = async (month: string) => {
   const { userId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");
@@ -15,10 +16,26 @@ export const getDashboard = async (month?: string) => {
       lt: new Date(`2024-${month}-31`),
     },
   };
+
+  const startDate = startOfYear(new Date());
+
+  // Calcular o final do mês alvo (targetMonth é de 1 a 12)
+  const endDate = endOfMonth(
+    new Date(new Date().getFullYear(), Number(month) - 1),
+  );
+
+  const whereTotal = {
+    userId,
+    date: {
+      gte: startDate,
+      lte: endDate,
+    },
+  };
+
   const depositsTotal = Number(
     (
       await db.transaction.aggregate({
-        where: { userId, type: "DEPOSIT" },
+        where: { ...whereTotal, type: "DEPOSIT" },
         _sum: { amount: true },
       })
     )?._sum?.amount,
@@ -35,7 +52,7 @@ export const getDashboard = async (month?: string) => {
   const investmentsTotal = Number(
     (
       await db.transaction.aggregate({
-        where: { userId, type: "INVESTMENT" },
+        where: { ...whereTotal, type: "INVESTMENT" },
         _sum: { amount: true },
       })
     )?._sum?.amount,
@@ -52,7 +69,7 @@ export const getDashboard = async (month?: string) => {
   const expensesTotal = Number(
     (
       await db.transaction.aggregate({
-        where: { userId, type: "EXPENSE" },
+        where: { ...whereTotal, type: "EXPENSE" },
         _sum: { amount: true },
       })
     )?._sum?.amount,
