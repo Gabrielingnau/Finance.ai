@@ -1,4 +1,4 @@
-# [💰 Finance.ai]([https://fullstackclub.com](https://finance-ai-nine-brown.vercel.app))
+# [💰 Finance.ai](https://finance-ai-nine-brown.vercel.app)
 
 Aplicativo web para controle geral das suas finanças.  
 Aqui você pode adicionar gastos, ganhos e investimentos, colocando nome, valor e detalhes.  
