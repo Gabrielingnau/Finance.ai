@@ -39,12 +39,12 @@ export async function POST(req: Request) {
   Transações: ${transactions.map((t: any) => `${t.date.toLocaleDateString("pt-BR")}-R$${t.amount}-${t.type}-${t.category}`).join(";")}`;
 
   const result = await streamText({
-    // Usamos 'any' aqui para silenciar o conflito de versões de modelos (V1 vs V3)
-    // Isso garante que o build passe na Vercel sem erros de tipagem
     model: openai("gpt-4o-mini") as any,
     system: "Você é um especialista em gestão de finanças pessoais.",
     prompt: prompt,
   });
 
-  return result.toTextStreamResponse();
+  // Em vez de toTextStreamResponse, use toDataStreamResponse.
+  // Isso resolve o erro de "Unhandled chunk type" na Vercel v14.
+  return result.toDataStreamResponse();
 }
