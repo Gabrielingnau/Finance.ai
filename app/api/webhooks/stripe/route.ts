@@ -14,7 +14,7 @@ export const POST = async (request: Request) => {
 
   const text = await request.text();
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2024-11-20.acacia" as any, // Forçamos compatibilidade
+    apiVersion: "2026-04-22.dahlia",
   });
 
   let event: Stripe.Event;
