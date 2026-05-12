@@ -1,12 +1,18 @@
-// Adicione a palavra 'type' aqui
-import type { TransactionCategory, TransactionType } from "@prisma/client";
-
 export type TransactionPercentagePerType = {
-  [key in TransactionType]: number;
+  [key in "DEPOSIT" | "EXPENSE" | "INVESTMENT"]: number;
 };
 
 export interface TotalExpensePerCategory {
-  category: TransactionCategory;
+  category:
+    | "HOUSING"
+    | "TRANSPORTATION"
+    | "FOOD"
+    | "ENTERTAINMENT"
+    | "HEALTH"
+    | "UTILITY"
+    | "SALARY"
+    | "EDUCATION"
+    | "OTHER";
   totalAmount: number;
   percentageOfTotal: number;
 }
