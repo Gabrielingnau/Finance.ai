@@ -9,22 +9,28 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/_components/ui/chart";
-import { TransactionType } from "@prisma/client";
-import { TransactionPercentagePerType } from "@/_data/get-dashboard/types";
+
+// Importamos apenas o tipo e a constante do seu arquivo de tipos local
+// Removida a importação do @prisma/client
+import {
+  TransactionPercentagePerType,
+  TransactionType,
+} from "@/_data/get-dashboard/types";
+
 import { PiggyBankIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import PercentageItem from "./percentage-item";
 import { ScrollArea } from "@/_components/ui/scroll-area";
 
 const chartConfig = {
-  [TransactionType.INVESTMENT]: {
+  INVESTMENT: {
     label: "Investido",
     color: "#FFFFFF",
   },
-  [TransactionType.DEPOSIT]: {
+  DEPOSIT: {
     label: "Receita",
     color: "#55B02E",
   },
-  [TransactionType.EXPENSE]: {
+  EXPENSE: {
     label: "Despesas",
     color: "#E93030",
   },
@@ -45,21 +51,22 @@ export default function TransactionsPieChart({
 }: TransactionsPieChartProps) {
   const chartData = [
     {
-      type: TransactionType.DEPOSIT,
+      type: "DEPOSIT",
       amount: depositsTotalNoMes,
       fill: "#55B02E",
     },
     {
-      type: TransactionType.EXPENSE,
+      type: "EXPENSE",
       amount: expensesTotalNoMes,
       fill: "#E93030",
     },
     {
-      type: TransactionType.INVESTMENT,
+      type: "INVESTMENT",
       amount: investmentsTotalNoMes,
       fill: "#FFFFFF",
     },
   ];
+
   return (
     <ScrollArea>
       <Card className="flex flex-col p-6">
@@ -86,17 +93,17 @@ export default function TransactionsPieChart({
             <PercentageItem
               icon={<TrendingUpIcon size={16} className="text-primary" />}
               title="Receita"
-              value={typesPercentage[TransactionType.DEPOSIT]}
+              value={typesPercentage["DEPOSIT"]}
             />
             <PercentageItem
               icon={<TrendingDownIcon size={16} className="text-red-500" />}
               title="Despesas"
-              value={typesPercentage[TransactionType.EXPENSE]}
+              value={typesPercentage["EXPENSE"]}
             />
             <PercentageItem
               icon={<PiggyBankIcon size={16} />}
               title="Investido"
-              value={typesPercentage[TransactionType.INVESTMENT]}
+              value={typesPercentage["INVESTMENT"]}
             />
           </div>
         </CardContent>

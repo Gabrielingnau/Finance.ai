@@ -2,6 +2,7 @@ export type TransactionPercentagePerType = {
   [key in "DEPOSIT" | "EXPENSE" | "INVESTMENT"]: number;
 };
 
+export type TransactionType = "INVESTMENT" | "DEPOSIT" | "EXPENSE";
 export interface TotalExpensePerCategory {
   category:
     | "HOUSING"
