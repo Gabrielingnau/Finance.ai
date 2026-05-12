@@ -1,17 +1,19 @@
+// Removida a importação do @prisma/client
+// Importamos os tipos do seu arquivo local para manter a tipagem forte no VS Code
 import {
   TransactionCategory,
   TransactionPaymentMethod,
   TransactionType,
-} from "@prisma/client";
+} from "@/_data/get-dashboard/types";
 
 export const TRANSACTION_PAYMENT_METHOD_ICONS = {
-  [TransactionPaymentMethod.CREDIT_CARD]: "credit-card.svg",
-  [TransactionPaymentMethod.DEBIT_CARD]: "debit-card.svg",
-  [TransactionPaymentMethod.BANK_TRANSFER]: "bank-transfer.svg",
-  [TransactionPaymentMethod.BANK_SLIP]: "bank-slip.svg",
-  [TransactionPaymentMethod.CASH]: "money.svg",
-  [TransactionPaymentMethod.PIX]: "pix.svg",
-  [TransactionPaymentMethod.OTHER]: "other.svg",
+  CREDIT_CARD: "credit-card.svg",
+  DEBIT_CARD: "debit-card.svg",
+  BANK_TRANSFER: "bank-transfer.svg",
+  BANK_SLIP: "bank-slip.svg",
+  CASH: "money.svg",
+  PIX: "pix.svg",
+  OTHER: "other.svg",
 };
 
 export const TRANSACTION_CATEGORY_LABELS = {
@@ -38,89 +40,85 @@ export const TRANSACTION_PAYMENT_METHOD_LABELS = {
 
 export const TRANSACTION_TYPE_OPTIONS = [
   {
-    value: TransactionType.EXPENSE,
+    value: "EXPENSE" as TransactionType,
     label: "Despesa",
   },
   {
-    value: TransactionType.DEPOSIT,
+    value: "DEPOSIT" as TransactionType,
     label: "Depósito",
   },
   {
-    value: TransactionType.INVESTMENT,
+    value: "INVESTMENT" as TransactionType,
     label: "Investimento",
   },
 ];
 
 export const TRANSACTION_PAYMENT_METHOD_OPTIONS = [
   {
-    value: TransactionPaymentMethod.BANK_TRANSFER,
-    label:
-      TRANSACTION_PAYMENT_METHOD_LABELS[TransactionPaymentMethod.BANK_TRANSFER],
+    value: "BANK_TRANSFER" as TransactionPaymentMethod,
+    label: TRANSACTION_PAYMENT_METHOD_LABELS.BANK_TRANSFER,
   },
   {
-    value: TransactionPaymentMethod.BANK_SLIP,
-    label:
-      TRANSACTION_PAYMENT_METHOD_LABELS[TransactionPaymentMethod.BANK_SLIP],
+    value: "BANK_SLIP" as TransactionPaymentMethod,
+    label: TRANSACTION_PAYMENT_METHOD_LABELS.BANK_SLIP,
   },
   {
-    value: TransactionPaymentMethod.CASH,
-    label: TRANSACTION_PAYMENT_METHOD_LABELS[TransactionPaymentMethod.CASH],
+    value: "CASH" as TransactionPaymentMethod,
+    label: TRANSACTION_PAYMENT_METHOD_LABELS.CASH,
   },
   {
-    value: TransactionPaymentMethod.CREDIT_CARD,
-    label:
-      TRANSACTION_PAYMENT_METHOD_LABELS[TransactionPaymentMethod.CREDIT_CARD],
+    value: "CREDIT_CARD" as TransactionPaymentMethod,
+    label: TRANSACTION_PAYMENT_METHOD_LABELS.CREDIT_CARD,
   },
   {
-    value: TransactionPaymentMethod.DEBIT_CARD,
-    label:
-      TRANSACTION_PAYMENT_METHOD_LABELS[TransactionPaymentMethod.DEBIT_CARD],
+    value: "DEBIT_CARD" as TransactionPaymentMethod,
+    label: TRANSACTION_PAYMENT_METHOD_LABELS.DEBIT_CARD,
   },
   {
-    value: TransactionPaymentMethod.OTHER,
-    label: TRANSACTION_PAYMENT_METHOD_LABELS[TransactionPaymentMethod.OTHER],
+    value: "OTHER" as TransactionPaymentMethod,
+    label: TRANSACTION_PAYMENT_METHOD_LABELS.OTHER,
   },
   {
-    value: TransactionPaymentMethod.PIX,
-    label: TRANSACTION_PAYMENT_METHOD_LABELS[TransactionPaymentMethod.PIX],
+    value: "PIX" as TransactionPaymentMethod,
+    label: TRANSACTION_PAYMENT_METHOD_LABELS.PIX,
   },
 ];
 
 export const TRANSACTION_CATEGORY_OPTIONS = [
   {
-    value: TransactionCategory.EDUCATION,
-    label: TRANSACTION_CATEGORY_LABELS[TransactionCategory.EDUCATION],
+    value: "EDUCATION" as TransactionCategory,
+    label: TRANSACTION_CATEGORY_LABELS.EDUCATION,
   },
   {
-    value: TransactionCategory.ENTERTAINMENT,
-    label: TRANSACTION_CATEGORY_LABELS[TransactionCategory.ENTERTAINMENT],
+    value: "ENTERTAINMENT" as TransactionCategory,
+    label: TRANSACTION_CATEGORY_LABELS.ENTERTAINMENT,
   },
   {
-    value: TransactionCategory.FOOD,
-    label: TRANSACTION_CATEGORY_LABELS[TransactionCategory.FOOD],
+    value: "FOOD" as TransactionCategory,
+    label: TRANSACTION_CATEGORY_LABELS.FOOD,
   },
   {
-    value: TransactionCategory.HEALTH,
-    label: TRANSACTION_CATEGORY_LABELS[TransactionCategory.HEALTH],
+    value: "HEALTH" as TransactionCategory,
+    label: TRANSACTION_CATEGORY_LABELS.HEALTH,
   },
   {
-    value: TransactionCategory.HOUSING,
-    label: TRANSACTION_CATEGORY_LABELS[TransactionCategory.HOUSING],
+    value: "HOUSING" as TransactionCategory,
+    label: TRANSACTION_CATEGORY_LABELS.HOUSING,
   },
   {
-    value: TransactionCategory.OTHER,
-    label: TRANSACTION_CATEGORY_LABELS[TransactionCategory.OTHER],
+    value: "OTHER" as TransactionCategory,
+    label: TRANSACTION_CATEGORY_LABELS.OTHER,
   },
   {
-    value: TransactionCategory.SALARY,
-    label: TRANSACTION_CATEGORY_LABELS[TransactionCategory.SALARY],
+    value: "SALARY" as TransactionCategory,
+    label: TRANSACTION_CATEGORY_LABELS.SALARY,
   },
   {
-    value: TransactionCategory.TRANSPORTATION,
-    label: TRANSACTION_CATEGORY_LABELS[TransactionCategory.TRANSPORTATION],
+    value: "TRANSPORTATION" as TransactionCategory,
+    label: TRANSACTION_CATEGORY_LABELS.TRANSPORTATION,
   },
   {
-    value: TransactionCategory.UTILITY,
-    label: TRANSACTION_CATEGORY_LABELS[TransactionCategory.UTILITY],
+    value: "UTILITY" as TransactionCategory,
+    label: TRANSACTION_CATEGORY_LABELS.UTILITY,
   },
 ];
