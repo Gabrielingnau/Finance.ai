@@ -2,7 +2,8 @@ import { db } from "@/_lib/prisma";
 import { TotalExpensePerCategory, TransactionPercentagePerType } from "./types";
 import { auth } from "@clerk/nextjs/server";
 import { endOfMonth, startOfMonth, startOfYear, setMonth } from "date-fns";
-import { TransactionType } from "../../../generated/prisma";
+// Importamos os tipos do seu arquivo centralizado para evitar erros de build
+import { TransactionType } from "@/_data/get-dashboard/types";
 
 export const getDashboard = async (month: string) => {
   const { userId } = await auth();
@@ -10,18 +11,13 @@ export const getDashboard = async (month: string) => {
     throw new Error("Unauthorized");
   }
 
-  // 1. Pegar o ano atual automaticamente
   const currentYear = new Date().getFullYear();
-
-  // 2. Criar uma data base para o mês escolhido (month costuma ser 01 a 12)
-  const monthIndex = Number(month) - 1; // date-fns usa meses de 0 a 11
+  const monthIndex = Number(month) - 1;
   const baseDate = setMonth(new Date(currentYear, 0, 1), monthIndex);
 
-  // 3. Definir datas exatas do mês atual (Início e Fim)
   const firstDayOfMonth = startOfMonth(baseDate);
   const lastDayOfMonth = endOfMonth(baseDate);
 
-  // Filtro para o mês selecionado
   const where = {
     userId,
     date: {
@@ -30,7 +26,6 @@ export const getDashboard = async (month: string) => {
     },
   };
 
-  // 4. Definir acumulado do ano (De 01/Jan até o fim do mês selecionado)
   const firstDayOfYear = startOfYear(baseDate);
 
   const whereTotal = {
@@ -41,8 +36,6 @@ export const getDashboard = async (month: string) => {
     },
   };
 
-  // --- BUSCAS NO BANCO ---
-
   const [
     depositsTotal,
     depositsTotalNoMes,
@@ -52,17 +45,14 @@ export const getDashboard = async (month: string) => {
     expensesTotalNoMes,
     transactionsTotalAggregation,
   ] = await Promise.all([
-    // Totais Acumulados no Ano
     db.transaction.aggregate({
       where: { ...whereTotal, type: "DEPOSIT" },
       _sum: { amount: true },
     }),
-    // Totais do Mês
     db.transaction.aggregate({
       where: { ...where, type: "DEPOSIT" },
       _sum: { amount: true },
     }),
-
     db.transaction.aggregate({
       where: { ...whereTotal, type: "INVESTMENT" },
       _sum: { amount: true },
@@ -71,7 +61,6 @@ export const getDashboard = async (month: string) => {
       where: { ...where, type: "INVESTMENT" },
       _sum: { amount: true },
     }),
-
     db.transaction.aggregate({
       where: { ...whereTotal, type: "EXPENSE" },
       _sum: { amount: true },
@@ -80,12 +69,9 @@ export const getDashboard = async (month: string) => {
       where: { ...where, type: "EXPENSE" },
       _sum: { amount: true },
     }),
-
-    // Total de transações no mês para o cálculo de porcentagem
     db.transaction.aggregate({ where, _sum: { amount: true } }),
   ]);
 
-  // Tratamento de valores (convertendo null para 0)
   const totalDeposits = Number(depositsTotal._sum.amount || 0);
   const monthDeposits = Number(depositsTotalNoMes._sum.amount || 0);
   const totalInvestments = Number(investmentsTotal._sum.amount || 0);
@@ -96,33 +82,32 @@ export const getDashboard = async (month: string) => {
     transactionsTotalAggregation._sum.amount || 0,
   );
 
-  // --- CÁLCULOS ---
-
   const balance = totalDeposits - totalInvestments - totalExpenses;
   const balanceMes = monthDeposits - monthInvestments - monthExpenses;
 
   const typesPercentage: TransactionPercentagePerType = {
-    [TransactionType.DEPOSIT]:
+    DEPOSIT:
       monthTransactionsTotal > 0
         ? Math.round((monthDeposits / monthTransactionsTotal) * 100)
         : 0,
-    [TransactionType.EXPENSE]:
+    EXPENSE:
       monthTransactionsTotal > 0
         ? Math.round((monthExpenses / monthTransactionsTotal) * 100)
         : 0,
-    [TransactionType.INVESTMENT]:
+    INVESTMENT:
       monthTransactionsTotal > 0
         ? Math.round((monthInvestments / monthTransactionsTotal) * 100)
         : 0,
   };
 
+  // CORREÇÃO: Tipamos o retorno do groupBy como 'any' ou uma interface específica para o map funcionar
   const totalExpensePerCategory: TotalExpensePerCategory[] = (
     await db.transaction.groupBy({
       by: ["category"],
-      where: { ...where, type: TransactionType.EXPENSE },
+      where: { ...where, type: "EXPENSE" },
       _sum: { amount: true },
     })
-  ).map((category) => ({
+  ).map((category: any) => ({
     category: category.category,
     totalAmount: Number(category._sum.amount),
     percentageOfTotal:
@@ -131,11 +116,17 @@ export const getDashboard = async (month: string) => {
         : 0,
   }));
 
-  const lastTransactions = await db.transaction.findMany({
+  const lastTransactionsFromDb = await db.transaction.findMany({
     where,
     orderBy: { date: "desc" },
     take: 15,
   });
+
+  // Garantimos que o array de transações também siga a interface manual (Decimal -> Number)
+  const lastTransactions = lastTransactionsFromDb.map((t) => ({
+    ...t,
+    amount: Number(t.amount),
+  }));
 
   return {
     balance,
