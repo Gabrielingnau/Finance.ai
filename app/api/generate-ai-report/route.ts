@@ -4,7 +4,7 @@ import { streamText } from "ai"; // Remova o LanguageModelV3 daqui
 import { openai } from "@ai-sdk/openai";
 import { endOfMonth, startOfMonth } from "date-fns";
 
-export const maxDuration = 60000;
+export const maxDuration = 10 * 1000;
 
 export async function POST(req: Request) {
   const { userId } = await auth();
