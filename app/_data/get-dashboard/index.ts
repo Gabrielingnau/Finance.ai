@@ -1,8 +1,8 @@
 import { db } from "@/_lib/prisma";
-import { TransactionType } from "@prisma/client";
 import { TotalExpensePerCategory, TransactionPercentagePerType } from "./types";
 import { auth } from "@clerk/nextjs/server";
 import { endOfMonth, startOfMonth, startOfYear, setMonth } from "date-fns";
+import { TransactionType } from "../../../generated/prisma";
 
 export const getDashboard = async (month: string) => {
   const { userId } = await auth();
