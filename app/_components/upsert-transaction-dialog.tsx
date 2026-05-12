@@ -1,8 +1,5 @@
-import {
-  TransactionCategory,
-  TransactionPaymentMethod,
-  TransactionType,
-} from "@prisma/client";
+"use client";
+
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -45,12 +42,28 @@ import { Button } from "./ui/button";
 import { DatePicker } from "./ui/date-picker";
 import { Input } from "./ui/input";
 
-interface UpsertTransactionDialogProps {
-  isOpen: boolean;
-  defaultValues?: FormSchema;
-  transactionId?: string;
-  setIsOpen: (isOpen: boolean) => void;
-}
+// --- Mapeamento de tipos para evitar import do Prisma ---
+const transactionTypes = ["INVESTMENT", "DEPOSIT", "EXPENSE"] as const;
+const paymentMethods = [
+  "CREDIT_CARD",
+  "DEBIT_CARD",
+  "BANK_TRANSFER",
+  "BANK_SLIP",
+  "CASH",
+  "PIX",
+  "OTHER",
+] as const;
+const categories = [
+  "HOUSING",
+  "TRANSPORTATION",
+  "FOOD",
+  "ENTERTAINMENT",
+  "HEALTH",
+  "UTILITY",
+  "SALARY",
+  "EDUCATION",
+  "OTHER",
+] as const;
 
 const formSchema = z.object({
   name: z.string().trim().min(1, {
@@ -63,13 +76,14 @@ const formSchema = z.object({
     .positive({
       message: "O valor deve ser positivo.",
     }),
-  type: z.nativeEnum(TransactionType, {
+  // Usamos z.enum com as constantes locais
+  type: z.enum(transactionTypes, {
     required_error: "O tipo é obrigatório.",
   }),
-  category: z.nativeEnum(TransactionCategory, {
+  category: z.enum(categories, {
     required_error: "A categoria é obrigatória.",
   }),
-  paymentMethod: z.nativeEnum(TransactionPaymentMethod, {
+  paymentMethod: z.enum(paymentMethods, {
     required_error: "O método de pagamento é obrigatório.",
   }),
   date: z.date({
@@ -78,6 +92,13 @@ const formSchema = z.object({
 });
 
 type FormSchema = z.infer<typeof formSchema>;
+
+interface UpsertTransactionDialogProps {
+  isOpen: boolean;
+  defaultValues?: FormSchema;
+  transactionId?: string;
+  setIsOpen: (isOpen: boolean) => void;
+}
 
 export default function UpsertTransactionDialog({
   isOpen,
@@ -88,11 +109,11 @@ export default function UpsertTransactionDialog({
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues ?? {
-      category: TransactionCategory.OTHER,
+      category: "OTHER",
       date: new Date(),
       name: "",
-      paymentMethod: TransactionPaymentMethod.CASH,
-      type: TransactionType.EXPENSE,
+      paymentMethod: "CASH",
+      type: "EXPENSE",
     },
   });
 
@@ -179,7 +200,7 @@ export default function UpsertTransactionDialog({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a verified email to display" />
+                          <SelectValue placeholder="Selecione o tipo..." />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -253,11 +274,8 @@ export default function UpsertTransactionDialog({
                 name="date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    {" "}
-                    {/* Adicione flex-col para garantir o layout */}
                     <FormLabel>Data</FormLabel>
                     <FormControl>
-                      {/* Garanta que o seu DatePicker aceite value e onChange */}
                       <DatePicker
                         value={field.value}
                         onChange={field.onChange}
