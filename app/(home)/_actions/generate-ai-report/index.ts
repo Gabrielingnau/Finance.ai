@@ -70,6 +70,8 @@ export const generateAiReport = async ({
     )
     .join(";")}`;
 
+  console.log(content);
+
   const completion = await openAi.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [

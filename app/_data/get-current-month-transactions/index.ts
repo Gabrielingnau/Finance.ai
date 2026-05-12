@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { endOfMonth, startOfMonth, setMonth } from "date-fns";
 
 export const getTransactionsCount = async (month: string) => {
+  console.log(month);
   const { userId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");
@@ -13,7 +14,7 @@ export const getTransactionsCount = async (month: string) => {
 
   // 2. Cria a data de referência baseada no mês solicitado (1-12)
   // Usamos o dia 1 para evitar problemas com meses que têm menos dias que hoje
-  const monthIndex = Number(month) - 1;
+  const monthIndex = Number(month);
   const referenceDate = setMonth(
     new Date(currentYear, monthIndex, 1),
     monthIndex,

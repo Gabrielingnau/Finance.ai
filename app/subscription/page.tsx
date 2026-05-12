@@ -17,6 +17,7 @@ export default async function SubscriptionPage() {
   const currentMonthTransactions = await getTransactionsCount(
     new Date().getMonth().toString(),
   );
+  console.log(currentMonthTransactions);
   const hasPremiumPlan = user.publicMetadata.subscriptionPlan == "premium";
   return (
     <>
