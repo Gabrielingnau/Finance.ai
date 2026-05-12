@@ -12,36 +12,39 @@ import {
   DialogTrigger,
 } from "@/_components/ui/dialog";
 import { BotIcon, Loader2Icon } from "lucide-react";
-import { generateAiReport } from "../_actions/generate-ai-report";
-import { useState } from "react";
 import { ScrollArea } from "@/_components/ui/scroll-area";
 import Markdown from "react-markdown";
 import Link from "next/link";
+import { useCompletion } from "ai/react";
 
 interface AiReportButtonProps {
   hasPremiumPlan: boolean;
   month: string;
-  year: string; // Adicionado o ano aqui
+  year: string;
 }
 
 export default function AiReportButton({
   month,
-  year, // Recebendo o ano das props
+  year,
   hasPremiumPlan,
 }: AiReportButtonProps) {
-  const [report, setReport] = useState<string | null>(null);
-  const [reportIsLoading, setReportIsLoading] = useState(false);
+  // O useCompletion gerencia o streaming automaticamente
+  const { completion, complete, isLoading, setCompletion } = useCompletion({
+    api: "/api/generate-ai-report",
+    onError: (error) => {
+      console.error("Erro ao gerar relatório:", error);
+    },
+  });
 
   const handleGenerateReportClick = async () => {
     try {
-      setReportIsLoading(true);
-      // Agora enviamos o objeto completo com month e year
-      const aiReport = await generateAiReport({ month, year });
-      setReport(aiReport);
+      // O primeiro argumento é o prompt (vazio pois o prompt real é montado na API)
+      // O segundo envia os dados no corpo da requisição POST
+      await complete("", {
+        body: { month, year },
+      });
     } catch (error) {
       console.error(error);
-    } finally {
-      setReportIsLoading(false);
     }
   };
 
@@ -49,7 +52,8 @@ export default function AiReportButton({
     <Dialog
       onOpenChange={(open) => {
         if (!open) {
-          setReport(null);
+          // Limpa o relatório ao fechar o modal
+          setCompletion("");
         }
       }}
     >
@@ -69,22 +73,22 @@ export default function AiReportButton({
                 sobre suas finanças de {month}/{year}.
               </DialogDescription>
             </DialogHeader>
+
             <ScrollArea className="prose max-h-[450px] text-white prose-h3:text-white prose-h4:text-white prose-strong:text-white">
-              {/* Fallback para quando o relatório ainda não foi gerado */}
+              {/* O 'completion' contém o texto que está sendo gerado em tempo real */}
               <Markdown>
-                {report || "Clique no botão abaixo para analisar seus dados."}
+                {completion ||
+                  "Clique no botão abaixo para analisar seus dados."}
               </Markdown>
             </ScrollArea>
+
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="ghost">Cancelar</Button>
               </DialogClose>
-              <Button
-                onClick={handleGenerateReportClick}
-                disabled={reportIsLoading}
-              >
-                {reportIsLoading && <Loader2Icon className="animate-spin" />}
-                Gerar relatório
+              <Button onClick={handleGenerateReportClick} disabled={isLoading}>
+                {isLoading && <Loader2Icon className="animate-spin" />}
+                {isLoading ? "Gerando..." : "Gerar relatório"}
               </Button>
             </DialogFooter>
           </>
