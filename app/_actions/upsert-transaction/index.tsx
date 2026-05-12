@@ -6,7 +6,7 @@ import {
   TransactionCategory,
   TransactionPaymentMethod,
   TransactionType,
-} from "@prisma/client";
+} from "@/_data/get-dashboard/types";
 import { upsertTransactionSchema } from "./schema";
 import { revalidatePath } from "next/cache";
 
