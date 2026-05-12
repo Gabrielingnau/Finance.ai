@@ -1,6 +1,14 @@
 import { Badge } from "@/_components/ui/badge";
-import { Transaction, TransactionType } from "@prisma/client";
 import { CircleIcon } from "lucide-react";
+
+// Importamos o tipo que definimos manualmente no seu arquivo de tipos
+import { TransactionType } from "@/_data/get-dashboard/types";
+
+// Definimos uma interface local para a transação para evitar o import de "@prisma/client"
+interface Transaction {
+  type: TransactionType;
+  // adicione outros campos se necessário, ou use 'any' se for apenas para o badge
+}
 
 interface TransactionTypeBadgeProps {
   transaction: Transaction;
@@ -9,7 +17,7 @@ interface TransactionTypeBadgeProps {
 export default function TransactionTypeBadge({
   transaction,
 }: TransactionTypeBadgeProps) {
-  if (transaction.type === TransactionType.DEPOSIT) {
+  if (transaction.type === "DEPOSIT") {
     return (
       <Badge className="bg-muted font-bold text-primary hover:bg-muted">
         <CircleIcon className="mr-2 fill-primary" size={10} />
@@ -17,7 +25,7 @@ export default function TransactionTypeBadge({
       </Badge>
     );
   }
-  if (transaction.type === TransactionType.EXPENSE) {
+  if (transaction.type === "EXPENSE") {
     return (
       <Badge className="bg-muted font-bold text-destructive hover:bg-muted">
         <CircleIcon className="mr-2 fill-destructive" size={10} />
