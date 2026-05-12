@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import Navbar from "../_components/navbar";
 import { redirect } from "next/navigation";
