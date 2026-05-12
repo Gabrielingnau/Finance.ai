@@ -2,27 +2,21 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 
-declare global {
-  // eslint-disable-next-line no-var
-  var cachedPrisma: PrismaClient | undefined;
-}
-
-let prisma: PrismaClient;
+// Esta parte ajuda o TS a entender o global sem erros de compilação
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
 // Criamos a conexão com o Neon
 const connectionString = `${process.env.DATABASE_URL}`;
 const pool = new pg.Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 
-if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient({ adapter });
-} else {
-  if (!global.cachedPrisma) {
-    // Passando o adapter explicitamente, o Prisma sabe que deve
-    // usar o Postgres direto e não o modo "Accelerate"
-    global.cachedPrisma = new PrismaClient({ adapter });
-  }
-  prisma = global.cachedPrisma;
-}
+// Instanciamos o Prisma passando o adapter
+export const db =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    adapter,
+  });
 
-export const db = prisma;
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
