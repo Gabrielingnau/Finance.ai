@@ -54,7 +54,8 @@ export interface Transaction {
   category: TransactionCategory;
   paymentMethod: TransactionPaymentMethod;
   date: Date;
-  amount: number;
   createdAt: Date;
   updatedAt: Date;
+  userId: string;
+  amount: number | string;
 }

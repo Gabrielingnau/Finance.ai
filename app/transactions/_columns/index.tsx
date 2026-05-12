@@ -1,6 +1,5 @@
 "use client";
 
-import { Transaction } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import TransactionTypeBadge from "../_components/type-badge";
 import {
@@ -9,6 +8,9 @@ import {
 } from "@/_constants/transactions";
 import EditTransactionButton from "@/transactions/_components/edit-transaction-button";
 import DeleteTransactionButton from "../_components/delete-transaction-button";
+
+// IMPORTANTE: Importar a interface que acabamos de definir acima
+import { Transaction } from "@/_data/get-dashboard/types";
 
 export const transactionColumns: ColumnDef<Transaction>[] = [
   {
@@ -56,13 +58,11 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell: ({ row: { original: transaction } }) => {
-      return (
-        <div className="space-x-1">
-          <EditTransactionButton transaction={transaction} />
-          <DeleteTransactionButton transactionId={transaction.id} />
-        </div>
-      );
-    },
+    cell: ({ row: { original: transaction } }) => (
+      <div className="space-x-1">
+        <EditTransactionButton transaction={transaction} />
+        <DeleteTransactionButton transactionId={transaction.id} />
+      </div>
+    ),
   },
 ];
