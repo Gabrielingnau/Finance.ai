@@ -1,4 +1,3 @@
-export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
 import "./globals.css";
