@@ -1,4 +1,5 @@
-import { TransactionCategory, TransactionType } from "@prisma/client";
+// Adicione a palavra 'type' aqui
+import type { TransactionCategory, TransactionType } from "@prisma/client";
 
 export type TransactionPercentagePerType = {
   [key in TransactionType]: number;
