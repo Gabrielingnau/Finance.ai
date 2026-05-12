@@ -2,16 +2,6 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-// Definimos um tipo customizado para a Invoice que aceita os campos da API 2025/2026
-type StripeInvoiceWithDetails = Stripe.Invoice & {
-  subscription: string; // Forçamos como string para evitar erro de objeto expandido
-  subscription_details?: {
-    metadata?: {
-      clerk_user_id?: string;
-    };
-  };
-};
-
 export const POST = async (request: Request) => {
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
     return NextResponse.error();
@@ -23,10 +13,8 @@ export const POST = async (request: Request) => {
   }
 
   const text = await request.text();
-
-  // Usamos 'as any' na versão da API para evitar conflito com tipos locais desatualizados
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2026-04-22.dahlia",
+    apiVersion: "2024-11-20.acacia" as any, // Forçamos compatibilidade
   });
 
   let event: Stripe.Event;
@@ -38,31 +26,31 @@ export const POST = async (request: Request) => {
       process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (err) {
-    return new NextResponse(
-      `Webhook Error: ${err instanceof Error ? err.message : "Unknown Error"}`,
-      { status: 400 },
-    );
+    return new NextResponse(`Webhook Error`, { status: 400 });
   }
 
   switch (event.type) {
     case "invoice.paid": {
-      // Aplicamos o nosso tipo customizado aqui
-      const invoice = event.data.object as StripeInvoiceWithDetails;
+      const invoice = event.data.object as any; // Usamos any para navegar na estrutura dinâmica
 
       const customerId = invoice.customer as string;
-      const subscriptionId = invoice.subscription;
 
-      // Buscamos o ID de forma resiliente em ambos os lugares possíveis
+      // No seu JSON, a subscription está dentro de parent.subscription_details
+      const subscriptionId =
+        invoice.subscription ||
+        invoice.parent?.subscription_details?.subscription;
+
+      // Buscamos o ID nos 3 lugares possíveis (Estrutura nova, Metadata da Invoice e Metadata do Item)
       const clerkUserId =
-        invoice.subscription_details?.metadata?.clerk_user_id ||
-        (invoice.metadata?.clerk_user_id as string);
+        invoice.parent?.subscription_details?.metadata?.clerk_user_id ||
+        invoice.metadata?.clerk_user_id ||
+        invoice.lines?.data[0]?.metadata?.clerk_user_id;
 
       if (!clerkUserId) {
-        console.error("Clerk User ID não encontrado nos metadados da Invoice");
-        return NextResponse.json(
-          { error: "Clerk User ID missing in metadata" },
-          { status: 400 },
+        console.error(
+          "Clerk User ID não encontrado em nenhuma estrutura do evento",
         );
+        return NextResponse.json({ error: "User ID missing" }, { status: 400 });
       }
 
       const client = await clerkClient();
@@ -82,12 +70,7 @@ export const POST = async (request: Request) => {
       const subscription = event.data.object as Stripe.Subscription;
       const clerkUserId = subscription.metadata?.clerk_user_id;
 
-      if (!clerkUserId) {
-        return NextResponse.json(
-          { error: "Clerk User ID missing in subscription metadata" },
-          { status: 400 },
-        );
-      }
+      if (!clerkUserId) break;
 
       const client = await clerkClient();
       await client.users.updateUser(clerkUserId, {
@@ -96,7 +79,7 @@ export const POST = async (request: Request) => {
           stripeSubscriptionId: null,
         },
         publicMetadata: {
-          subscriptionPlan: null,
+          subscriptionPlan: "free", // Mudado de null para "free" para evitar erros de renderização
         },
       });
       break;
