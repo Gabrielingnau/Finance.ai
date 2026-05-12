@@ -1,7 +1,8 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
 import Stripe from "stripe";
+
+import { auth } from "@clerk/nextjs/server";
 
 export const createStripeCheckout = async () => {
   const { userId } = await auth();
@@ -12,7 +13,7 @@ export const createStripeCheckout = async () => {
     throw new Error("Stripe secret key not found");
   }
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2024-11-20.acacia",
+    apiVersion: "2024-10-28.acacia", // Mude de 11-20 para 10-28
   });
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],

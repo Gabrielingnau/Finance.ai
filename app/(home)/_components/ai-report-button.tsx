@@ -21,19 +21,22 @@ import Link from "next/link";
 interface AiReportButtonProps {
   hasPremiumPlan: boolean;
   month: string;
+  year: string; // Adicionado o ano aqui
 }
 
 export default function AiReportButton({
   month,
+  year, // Recebendo o ano das props
   hasPremiumPlan,
 }: AiReportButtonProps) {
   const [report, setReport] = useState<string | null>(null);
   const [reportIsLoading, setReportIsLoading] = useState(false);
+
   const handleGenerateReportClick = async () => {
     try {
       setReportIsLoading(true);
-      const aiReport = await generateAiReport({ month });
-      console.log({ aiReport });
+      // Agora enviamos o objeto completo com month e year
+      const aiReport = await generateAiReport({ month, year });
       setReport(aiReport);
     } catch (error) {
       console.error(error);
@@ -41,6 +44,7 @@ export default function AiReportButton({
       setReportIsLoading(false);
     }
   };
+
   return (
     <Dialog
       onOpenChange={(open) => {
@@ -62,11 +66,14 @@ export default function AiReportButton({
               <DialogTitle>Relatório IA</DialogTitle>
               <DialogDescription>
                 Use inteligência artificial para gerar um relatório com insights
-                sobre suas finanças.
+                sobre suas finanças de {month}/{year}.
               </DialogDescription>
             </DialogHeader>
-            <ScrollArea className="prose prose-h3:text-white prose-h4:text-white prose-strong:text-white max-h-[450px] text-white">
-              <Markdown>{report}</Markdown>
+            <ScrollArea className="prose max-h-[450px] text-white prose-h3:text-white prose-h4:text-white prose-strong:text-white">
+              {/* Fallback para quando o relatório ainda não foi gerado */}
+              <Markdown>
+                {report || "Clique no botão abaixo para analisar seus dados."}
+              </Markdown>
             </ScrollArea>
             <DialogFooter>
               <DialogClose asChild>

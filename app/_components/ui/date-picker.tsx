@@ -17,9 +17,11 @@ interface DatePickerProps {
 
 export const DatePicker = ({ value, onChange }: DatePickerProps) => {
   return (
-    <Popover>
+    // MUDANÇA 1: Adicionamos o modal={true} para o Popover entender que está dentro de outro modal
+    <Popover modal={true}>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
@@ -38,7 +40,13 @@ export const DatePicker = ({ value, onChange }: DatePickerProps) => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+
+      {/* MUDANÇA 2: onOpenAutoFocus impede que o Dialog roube o foco de volta imediatamente */}
+      <PopoverContent
+        className="z-[9999] w-auto p-0"
+        align="start"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <Calendar
           mode="single"
           selected={value}

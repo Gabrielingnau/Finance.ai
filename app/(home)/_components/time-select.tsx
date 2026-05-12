@@ -27,16 +27,26 @@ const MONTH_OPTIONS = [
 export default function TimeSelect() {
   const { push } = useRouter();
   const searchParams = useSearchParams();
+
+  // 1. Pegamos o mês da URL
   const month = searchParams.get("month");
-  const handleMonthChange = (month: string) => {
-    push(`/?month=${month}`);
+
+  // 2. Fallback para o mês atual formatado
+  const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, "0");
+
+  const handleMonthChange = (selectedMonth: string) => {
+    // 3. Importante: Use apenas o path relativo para funcionar em qualquer página
+    push(`?month=${selectedMonth}`);
   };
+
   return (
     <Select
       onValueChange={(value) => handleMonthChange(value)}
-      defaultValue={month ?? ""}
+      // 4. TROCA: Usamos 'value' em vez de 'defaultValue' para ser controlado
+      value={month ?? currentMonth}
     >
       <SelectTrigger className="w-[150px] rounded-full">
+        {/* O SelectValue vai mostrar o label do 'value' atual */}
         <SelectValue placeholder="Mês" />
       </SelectTrigger>
       <SelectContent>

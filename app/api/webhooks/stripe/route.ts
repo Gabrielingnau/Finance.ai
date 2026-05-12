@@ -12,7 +12,7 @@ export const POST = async (request: Request) => {
   }
   const text = await request.text();
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2024-11-20.acacia",
+    apiVersion: "2024-10-28.acacia", // Mude de 11-20 para 10-28
   });
   const event = stripe.webhooks.constructEvent(
     text,
