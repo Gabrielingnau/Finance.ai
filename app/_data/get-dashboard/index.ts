@@ -2,7 +2,6 @@ import { db } from "@/_lib/prisma";
 import { TotalExpensePerCategory, TransactionPercentagePerType } from "./types";
 import { auth } from "@clerk/nextjs/server";
 import { endOfMonth, startOfMonth, startOfYear, setMonth } from "date-fns";
-// Importamos os tipos do seu arquivo centralizado para evitar erros de build
 import { TransactionType } from "@/_data/get-dashboard/types";
 
 export const getDashboard = async (month: string) => {
@@ -100,7 +99,6 @@ export const getDashboard = async (month: string) => {
         : 0,
   };
 
-  // CORREÇÃO: Tipamos o retorno do groupBy como 'any' ou uma interface específica para o map funcionar
   const totalExpensePerCategory: TotalExpensePerCategory[] = (
     await db.transaction.groupBy({
       by: ["category"],
@@ -122,8 +120,8 @@ export const getDashboard = async (month: string) => {
     take: 15,
   });
 
-  // Garantimos que o array de transações também siga a interface manual (Decimal -> Number)
-  const lastTransactions = lastTransactionsFromDb.map((t) => ({
+  // CORREÇÃO FINAL: Adicionado ': any' no parâmetro 't' para evitar o erro de 'implicitly has any type'
+  const lastTransactions = lastTransactionsFromDb.map((t: any) => ({
     ...t,
     amount: Number(t.amount),
   }));
