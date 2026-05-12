@@ -467,7 +467,7 @@ export namespace Prisma {
   /**
    * Is T a Record?
    */
-  type IsObject<T extends unknown> =
+  type IsObject<T extends any> =
     T extends Array<any>
       ? False
       : T extends Date

@@ -15,14 +15,14 @@ declare type Args<T, F extends Operation> = T extends {
     types: {
       operations: {
         [K in F]: {
-          args: UnknownCredentialOptions;
+          args: any;
         };
       };
     };
   };
 }
   ? T[symbol]["types"]["operations"][F]["args"]
-  : anUnknownCredentialOptionsy;
+  : any;
 
 export { DbNull };
 
