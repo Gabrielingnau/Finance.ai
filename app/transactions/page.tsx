@@ -5,9 +5,10 @@ import AddTransactionButton from "@/_components/add-transaction-button";
 import NavBar from "@/_components/navbar";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { ScrollArea } from "@/_components/ui/scroll-area"; // Corrigido o path se necessário
 import { canUserAddTransaction } from "@/_data/can-user-add-transaction";
 import { endOfMonth, startOfMonth, setMonth } from "date-fns";
+import { Transaction } from "@/_data/get-dashboard/types";
 
 interface TransactionsPageProps {
   searchParams: {
@@ -24,7 +25,6 @@ export default async function TransactionsPage({
   }
 
   // 1. Pegamos o mês da URL ou usamos o mês atual como fallback
-  // Nota: O mês na URL (1-12) deve ser passado para a função
   const month = searchParams.month || (new Date().getMonth() + 1).toString();
 
   // 2. Enviamos o mês para a função de verificação
@@ -41,7 +41,8 @@ export default async function TransactionsPage({
   const startDate = startOfMonth(referenceDate);
   const endDate = endOfMonth(referenceDate);
 
-  const transactions = await db.transaction.findMany({
+  // 4. Busca os dados brutos do Prisma
+  const transactionsFromDb = await db.transaction.findMany({
     where: {
       userId,
       date: {
@@ -51,6 +52,17 @@ export default async function TransactionsPage({
     },
     orderBy: { date: "desc" },
   });
+
+  // 5. Conversão crucial: Transforma o tipo Decimal (Prisma) em Number (JS)
+  // Isso garante compatibilidade com a interface Transaction que usamos nas colunas
+  const transactions: Transaction[] = transactionsFromDb.map((transaction) => ({
+    ...transaction,
+    amount: Number(transaction.amount),
+    // Garantimos que os tipos de enum batam com a nossa interface manual
+    type: transaction.type as any,
+    category: transaction.category as any,
+    paymentMethod: transaction.paymentMethod as any,
+  }));
 
   return (
     <>
@@ -63,6 +75,7 @@ export default async function TransactionsPage({
           />
         </div>
         <ScrollArea className="h-full">
+          {/* Agora 'transactions' é um array compatível com o tipo Transaction do frontend */}
           <DataTable columns={transactionColumns} data={transactions} />
         </ScrollArea>
       </div>
